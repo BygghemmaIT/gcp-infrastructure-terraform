@@ -75,4 +75,24 @@ module "slim_gke" {
     }
   ]
 
+  node_pools_labels = {
+    all = {}
+
+    default-node-pool = {
+      default-node-pool = true
+    }
+  }
+
+  node_pools_taints = {
+    all = []
+
+    spot-node-pool = [
+      {
+        key    = "cloud.google.com/gke-spot"
+        value  = true
+        effect = "NO_SCHEDULE"
+      }
+    ]
+  }
+
 }

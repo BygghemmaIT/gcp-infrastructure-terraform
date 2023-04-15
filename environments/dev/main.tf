@@ -94,7 +94,7 @@ module "slim_gke" {
       {
         key    = "cloud.google.com/gke-spot"
         value  = true
-        effect = "NoSchedule"
+        effect = "NO_SCHEDULE"
       }
     ]
   }
