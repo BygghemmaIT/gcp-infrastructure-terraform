@@ -46,7 +46,7 @@ steps:
           terraform init || exit 1
           cd ../../
         done
-      fi 
+      fi
 
 # [START tf-plan]
 - id: 'tf plan'
@@ -71,7 +71,7 @@ steps:
           terraform plan || exit 1
           cd ../../
         done
-      fi 
+      fi
 # [END tf-plan]
 
 # [START tf-apply]
