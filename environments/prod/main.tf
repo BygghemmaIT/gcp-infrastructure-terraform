@@ -35,9 +35,13 @@ module "slim_gke" {
   regional  = false
   zones     = ["europe-north1-b"]
 
+  monitoring_enable_managed_prometheus = true
   enable_vertical_pod_autoscaling = true
   release_channel = "STABLE"
 
+  logging_enabled_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+
+  remove_default_node_pool = true
   node_pools = [
     {
       name                      = "default-node-pool"

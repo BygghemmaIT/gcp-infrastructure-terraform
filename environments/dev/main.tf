@@ -39,7 +39,7 @@ module "slim_gke" {
   enable_vertical_pod_autoscaling = true
   release_channel = "STABLE"
 
-  logging_enabled_components = ["WORKLOADS"]
+  logging_enabled_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
 
   remove_default_node_pool = true
   node_pools = [
