@@ -35,6 +35,7 @@ module "slim_gke" {
   regional  = false
   zones     = ["europe-north1-b"]
 
+  create_service_account = false
   monitoring_enable_managed_prometheus = true
   enable_vertical_pod_autoscaling = true
   release_channel = "STABLE"
