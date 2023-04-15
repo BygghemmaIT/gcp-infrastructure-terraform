@@ -91,5 +91,6 @@ steps:
       fi
 # [END tf-apply]      
 
+logsBucket: 'gs://bh-cicd-tflogs'
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: GCS_ONLY
