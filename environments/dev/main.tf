@@ -19,6 +19,13 @@ module "slim_project" {
   activate_apis = ["compute.googleapis.com", "container.googleapis.com"]
 }
 
+resource "google_project_iam_member" "developer-slim" {
+  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin"] )
+  project = module.slim_project.project_id
+  role    = each.key
+  member  = "group:developer@bygghemma.se"
+}
+
 module "slim_gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
   version = "25.0.0"
