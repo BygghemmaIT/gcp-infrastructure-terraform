@@ -16,7 +16,7 @@ module "slim_project" {
   random_project_id   = true
   svpc_host_project_id = var.vpc_host_project_id
   shared_vpc_subnets = ["projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}"]
-  activate_apis = ["compute.productapi.com", "container.productapi.com"]
+  activate_apis = ["compute.googleapis.com", "container.googleapis.com"]
 }
 
 module "slim_gke" {
