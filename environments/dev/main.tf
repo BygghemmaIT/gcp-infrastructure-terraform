@@ -3,6 +3,7 @@ locals {
   slim_project_id = "bh-slim-test"
   host_network = "bghprod"
   slim_network = "bhtest-europe-north1"
+  cloudrun_network = "bhtest-cr-europe-north1"
 }
 
 module "slim_project" {
@@ -15,8 +16,26 @@ module "slim_project" {
   folder_id           = var.folder_id
   random_project_id   = true
   svpc_host_project_id = var.vpc_host_project_id
-  shared_vpc_subnets = ["projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}"]
+  shared_vpc_subnets = [
+    "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}",
+    "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.cloudrun_network}"
+  ]
   activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com"]
+}
+
+module "cloudrun-vpc-connector" {
+  source     = "terraform-google-modules/network/google//modules/vpc-serverless-connector-beta"
+  project_id = module.slim_project.project_id
+  vpc_connectors = [{
+    name            = local.cloudrun_network
+    region          = var.region
+    subnet_name     = local.cloudrun_network
+    host_project_id = var.vpc_host_project_id
+    machine_type    = "f1-micro"
+    min_instances   = 2
+    max_instances   = 10
+    max_throughput  = 500
+  }]
 }
 
 resource "google_project_iam_member" "developer-slim" {
