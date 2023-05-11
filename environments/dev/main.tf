@@ -23,11 +23,11 @@ module "slim_project" {
   activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com"]
 }
 
-module "cloudrun-vpc-connector" {
+module "vpc-serverless-connector-beta" {
   source     = "terraform-google-modules/network/google//modules/vpc-serverless-connector-beta"
   project_id = module.slim_project.project_id
   vpc_connectors = [{
-    name            = local.cloudrun_network
+    name            = "cloudrun-vpc-connector"
     region          = var.region
     subnet_name     = local.cloudrun_network
     host_project_id = var.vpc_host_project_id
