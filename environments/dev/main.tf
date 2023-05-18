@@ -45,6 +45,12 @@ resource "google_project_iam_member" "developer-slim" {
   member  = "group:developer@bygghemma.se"
 }
 
+resource "google_project_iam_member" "legacy-build" {
+  project = module.slim_project.project_id
+  role    = "roles/container.developer"
+  member  = "serviceaccount:1016006425732@cloudbuild.gserviceaccount.com"
+}
+
 module "slim_gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
   version = "25.0.0"
