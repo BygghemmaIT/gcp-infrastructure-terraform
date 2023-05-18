@@ -34,7 +34,7 @@ module "vpc-serverless-connector-beta" {
     machine_type    = "f1-micro"
     min_instances   = 2
     max_instances   = 10
-    max_throughput  = 500
+    max_throughput  = 1000
   }]
 }
 
