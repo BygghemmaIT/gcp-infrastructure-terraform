@@ -50,6 +50,13 @@ resource "google_project_iam_member" "legacy-build" {
   role    = "roles/container.developer"
   member  = "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com"
 }
+resource "google_project_iam_member" "build" {
+  project = module.slim_project.project_id
+  role    = "roles/container.developer"
+  member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
+}
+
+
 
 module "slim_gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
