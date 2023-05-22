@@ -3,6 +3,7 @@ locals {
   slim_project_id = "bh-slim-prod"
   host_network = "bghprod"
   slim_network = "bhprod-europe-north1"
+  cloudrun_network = "bhprod-cr-europe-north1"
 }
 
 module "slim_project" {
@@ -15,8 +16,44 @@ module "slim_project" {
   folder_id           = var.folder_id
   random_project_id   = true
   svpc_host_project_id = var.vpc_host_project_id
-  shared_vpc_subnets = ["projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}"]
-  activate_apis = ["compute.googleapis.com", "container.googleapis.com"]
+  shared_vpc_subnets = [
+    "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}",
+    "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.cloudrun_network}"
+  ]
+  activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com"]
+}
+
+module "vpc-serverless-connector-beta" {
+  source     = "terraform-google-modules/network/google//modules/vpc-serverless-connector-beta"
+  project_id = module.slim_project.project_id
+  vpc_connectors = [{
+    name            = "cloudrun-vpc-connector"
+    region          = var.region
+    subnet_name     = local.cloudrun_network
+    host_project_id = var.vpc_host_project_id
+    machine_type    = "f1-micro"
+    min_instances   = 2
+    max_instances   = 10
+    max_throughput  = 1000
+  }]
+}
+
+resource "google_project_iam_member" "developer-slim" {
+  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin"] )
+  project = module.slim_project.project_id
+  role    = each.key
+  member  = "group:developer@bygghemma.se"
+}
+
+resource "google_project_iam_member" "legacy-build" {
+  project = module.slim_project.project_id
+  role    = "roles/container.developer"
+  member  = "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com"
+}
+resource "google_project_iam_member" "build" {
+  project = module.slim_project.project_id
+  role    = "roles/container.developer"
+  member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
 }
 
 module "slim_gke" {
@@ -32,8 +69,8 @@ module "slim_gke" {
   ip_range_pods       = "pods"
   ip_range_services   = "services"
 
-  regional  = false
-  zones     = ["europe-north1-b"]
+  regional  = true
+  region     = "europe-north1"
 
   monitoring_enable_managed_prometheus = true
   enable_vertical_pod_autoscaling = true
@@ -98,5 +135,4 @@ module "slim_gke" {
       }
     ]
   }
-
 }
