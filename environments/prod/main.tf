@@ -39,7 +39,7 @@ module "vpc-serverless-connector-beta" {
 }
 
 resource "google_project_iam_member" "developer-slim" {
-  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin", "roles/container.secrets.get"] )
+  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin", "roles/container.developer"] )
   project = module.slim_project.project_id
   role    = each.key
   member  = "group:developer@bygghemma.se"
