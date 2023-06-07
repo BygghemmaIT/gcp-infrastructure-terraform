@@ -50,9 +50,11 @@ resource "google_project_iam_member" "legacy-build" {
   role    = "roles/container.developer"
   member  = "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com"
 }
+
 resource "google_project_iam_member" "build" {
+  for_each = toset( ["roles/container.developer", "roles/run.develper"] )
   project = module.slim_project.project_id
-  role    = "roles/container.developer"
+  role    = each.key
   member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
 }
 
