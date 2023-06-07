@@ -52,13 +52,11 @@ resource "google_project_iam_member" "legacy-build" {
 }
 
 resource "google_project_iam_member" "build" {
-  for_each = toset( ["roles/container.developer", "roles/run.developer"] )
+  for_each = toset( ["roles/container.developer", "roles/run.developer", "roles/iam.serviceAccountUser"] )
   project = module.slim_project.project_id
   role    = each.key
   member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
 }
-
-
 
 module "slim_gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
