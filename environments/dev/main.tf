@@ -59,19 +59,13 @@ resource "google_project_iam_member" "build" {
   member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
 }
 
-data "google_iam_policy" "github-nuget-secret-access" {
-  binding {
-    role = "roles/secretmanager.secretAccessor"
-    members = [
-      "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com"
-    ]
-  }
-}
-
-resource "google_secret_manager_secret_iam_policy" "github-nuget-secret-policy" {
+resource "google_secret_manager_secret_iam_binding" "github-nuget-secret-access" {
   project = local.cicd_project_id
-  secret_id = "projects/${locals.cicd_project_id}/secrets/github-serviceaccount-nuget-password"
-  policy_data = data.google_iam_policy.github-nuget-secret-access
+  secret_id = "projects/${local.cicd_project_id}/secrets/github-serviceaccount-nuget-password"
+  role = "roles/secretmanager.secretAccessor"
+  members = [
+      "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com",
+  ]
 }
 
 module "slim_gke" {
