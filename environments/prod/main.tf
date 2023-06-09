@@ -1,6 +1,7 @@
 locals {
   env = "prod"
   slim_project_id = "bh-slim-prod"
+  cicd_project_id = "bh-cicd"
   host_network = "bghprod"
   slim_network = "bhprod-europe-north1"
   cloudrun_network = "bhprod-cr-europe-north1"
