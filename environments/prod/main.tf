@@ -20,7 +20,7 @@ module "slim_project" {
     "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}",
     "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.cloudrun_network}"
   ]
-  activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com"]
+  activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com", "servicemanagement.googleapis.com"]
 }
 
 module "vpc-serverless-connector-beta" {
