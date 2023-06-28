@@ -20,7 +20,7 @@ module "slim_project" {
     "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.slim_network}",
     "projects/${var.vpc_host_project_id}/regions/${var.region}/subnetworks/${local.cloudrun_network}"
   ]
-  activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com"]
+  activate_apis = ["compute.googleapis.com", "container.googleapis.com", "run.googleapis.com", "pubsub.googleapis.com", "secretmanager.googleapis.com", "vpcaccess.googleapis.com", "servicemanagement.googleapis.com"]
 }
 
 module "vpc-serverless-connector-beta" {
@@ -39,7 +39,7 @@ module "vpc-serverless-connector-beta" {
 }
 
 resource "google_project_iam_member" "developer-slim" {
-  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin"] )
+  for_each = toset( ["roles/cloudtasks.admin","roles/iam.serviceAccountCreator","roles/iam.serviceAccountUser","roles/pubsub.admin","roles/run.developer","roles/storage.admin", "roles/container.developer"] )
   project = module.slim_project.project_id
   role    = each.key
   member  = "group:developer@bygghemma.se"
@@ -50,13 +50,13 @@ resource "google_project_iam_member" "legacy-build" {
   role    = "roles/container.developer"
   member  = "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com"
 }
+
 resource "google_project_iam_member" "build" {
+  for_each = toset( ["roles/container.developer", "roles/run.developer", "roles/iam.serviceAccountUser"] )
   project = module.slim_project.project_id
-  role    = "roles/container.developer"
+  role    = each.key
   member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
 }
-
-
 
 module "slim_gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
