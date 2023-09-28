@@ -1,6 +1,7 @@
 locals {
   env = "prod"
   slim_project_id = "bh-slim-prod"
+  cicd_project_id = "bh-cicd"
   host_network = "bghprod"
   slim_network = "bhprod-europe-north1"
   cloudrun_network = "bhprod-cr-europe-north1"
@@ -56,6 +57,15 @@ resource "google_project_iam_member" "build" {
   project = module.slim_project.project_id
   role    = each.key
   member  = "serviceAccount:226821549783@cloudbuild.gserviceaccount.com"
+}
+
+resource "google_secret_manager_secret_iam_binding" "github-nuget-secret-access" {
+  project = local.cicd_project_id
+  secret_id = "projects/${local.cicd_project_id}/secrets/github-serviceaccount-nuget-password"
+  role = "roles/secretmanager.secretAccessor"
+  members = [
+      "serviceAccount:1016006425732@cloudbuild.gserviceaccount.com",
+  ]
 }
 
 module "slim_gke" {
